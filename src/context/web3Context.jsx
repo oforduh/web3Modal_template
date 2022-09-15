@@ -123,26 +123,30 @@ export const Web3ContextProvider = ({ children }) => {
 
   // this functionality handles connect wallet - only runs for WalletProviders
   const connect = useCallback(async () => {
-    const rawProvider = await web3Modal.connect();
-    await web3Modal.toggleModal();
-    _initListeners(rawProvider);
+    try {
+      const rawProvider = await web3Modal.connect();
+      await web3Modal.toggleModal();
+      _initListeners(rawProvider);
 
-    const connectedProvider = new Web3Provider(rawProvider, "any");
+      const connectedProvider = new Web3Provider(rawProvider, "any");
 
-    const chainId = await connectedProvider
-      .getNetwork()
-      .then((network) => network.chainId);
-    const validNetwork = _checkNetwork(chainId);
-    if (!validNetwork) {
-      return toast.warn(
-        "Switch to the Etherium mainnet and click connect wallet"
-      );
+      const chainId = await connectedProvider
+        .getNetwork()
+        .then((network) => network.chainId);
+      const validNetwork = _checkNetwork(chainId);
+      if (!validNetwork) {
+        return toast.warn(
+          "Switch to the Etherium mainnet and click connect wallet"
+        );
+      }
+      const connectedAddress = await connectedProvider.getSigner().getAddress();
+      setAddress(connectedAddress);
+      setProvider(connectedProvider);
+      setConnected(true);
+      return connectedProvider;
+    } catch (error) {
+      console.log(error);
     }
-    const connectedAddress = await connectedProvider.getSigner().getAddress();
-    setAddress(connectedAddress);
-    setProvider(connectedProvider);
-    setConnected(true);
-    return connectedProvider;
   }, [provider, web3Modal, connected]);
 
   // disconnect a user wallet after it has been connected
