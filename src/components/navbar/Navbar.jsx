@@ -4,6 +4,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import Web3Modal from "web3modal";
 import { StaticJsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { EnvHelper } from '../../helper/Environment';
+import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 
 const Navbar = () => {
 
@@ -29,6 +30,20 @@ const Navbar = () => {
           chainID: 97
         },
       },
+      binancechainwallet: {
+        package: true
+      },
+      coinbasewallet: {
+        package: CoinbaseWalletSDK, // Required
+        options: {
+          appName: "My Awesome App", // Required
+          rpc: {
+            97: 'https://data-seed-prebsc-1-s2.binance.org:8545'
+          },
+          chainID: 97
+        }
+      },
+   
     },
   }),);
   const [uri, setUri] = useState(getMainnetURI());
